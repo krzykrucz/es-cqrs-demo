@@ -15,14 +15,14 @@ import java.util.UUID;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(classes = {TestConfig.class, EsCqrsApplication.class})
 public class EsCqrsApplicationTests {
 
     private static final Location LOCATION = new Location(51, 19);
-
+    @Autowired
+    TestEventListener testEventListener;
     @Autowired
     private CarCommandApplicationService carCommandApplicationService;
-
     @Autowired
     private CarRepository carRepository;
 
@@ -37,6 +37,7 @@ public class EsCqrsApplicationTests {
 
         //then
         assertEquals(carRepository.findOne(id).getCurrentLocation(), LOCATION);
+        assertEquals(testEventListener.getEvents().get(0).getCarId(), id);
     }
 
 }
