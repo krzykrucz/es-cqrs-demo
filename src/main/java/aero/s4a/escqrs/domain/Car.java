@@ -34,7 +34,7 @@ public class Car {
 
     public void moveTo(Location location) {
         final CarEvent carMovedEvent = new CarMoved(Instant.now(), this.id, location);
-        apply(carMovedEvent);
+        applyNew(carMovedEvent);
     }
 
     public List<CarEvent> getNewEventsAndCommit() {
@@ -43,11 +43,15 @@ public class Car {
         return eventsList;
     }
 
+    private void applyNew(CarEvent event) {
+        apply(event);
+        newEvents.add(event);
+    }
+
     private void apply(CarEvent event) {
         if (event instanceof CarMoved) {
             apply((CarMoved) event);
         }
-        newEvents.add(event);
     }
 
     private void apply(CarMoved carMovedEvent) {
