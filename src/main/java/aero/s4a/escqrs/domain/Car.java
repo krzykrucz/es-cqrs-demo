@@ -26,16 +26,33 @@ public class Car {
         this.id = id;
     }
 
+    public static Car from(UUID id, List<CarEvent> historicalEvents) {
+        final Car car = new Car(id);
+        historicalEvents.forEach(car::apply);
+        return car;
+    }
+
     public void moveTo(Location location) {
-        this.mileage += location.distanceTo(currentLocation);
-        this.currentLocation = location;
         final CarEvent carMovedEvent = new CarMoved(Instant.now(), this.id, location);
-        newEvents.add(carMovedEvent);
+        apply(carMovedEvent);
     }
 
     public List<CarEvent> getNewEventsAndCommit() {
         final List<CarEvent> eventsList = ImmutableList.copyOf(newEvents);
         newEvents.clear();
         return eventsList;
+    }
+
+    private void apply(CarEvent event) {
+        if (event instanceof CarMoved) {
+            apply((CarMoved) event);
+        }
+        newEvents.add(event);
+    }
+
+    private void apply(CarMoved carMovedEvent) {
+        final Location location = carMovedEvent.getNewLocation();
+        this.mileage += location.distanceTo(currentLocation);
+        this.currentLocation = location;
     }
 }
