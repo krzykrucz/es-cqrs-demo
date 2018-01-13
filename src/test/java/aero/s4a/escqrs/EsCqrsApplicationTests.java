@@ -37,6 +37,7 @@ public class EsCqrsApplicationTests {
 
         //then
         assertEquals(carRepository.findOne(id).getCurrentLocation(), LOCATION);
+        assertEquals(carRepository.findOne(id).getMileage(), 10);
         assertEquals(testEventListener.getEvents().get(0).getCarId(), id);
     }
 
